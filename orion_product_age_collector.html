@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORION - Thu Thập Tuổi Sản Phẩm (Product Age)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        orion: {
+                            red: '#E31837',
+                            darkRed: '#B8112A',
+                            gold: '#F4B41A',
+                            bg: '#FAF9F6',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth transitions between steps */
+        .step-transition {
+            transition: all 0.3s ease-in-out;
+        }
+        /* Hide scrollbars for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800 flex flex-col justify-between items-center selection:bg-red-500 selection:text-white">
+
+    <!-- Container wrapper with max width to mimic mobile web app or clean desktop application -->
+    <div class="w-full max-w-md md:max-w-xl bg-white min-h-screen shadow-xl flex flex-col justify-between relative overflow-hidden">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <div>
+            <!-- Header Status Bar -->
+            <header class="border-b border-gray-100 px-4 py-3 flex items-center justify-between bg-white sticky top-0 z-20">
+                <div class="flex items-center space-x-3">
+                    <button id="btn-back" onclick="navigateStep(-1)" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 active:scale-95 transition text-gray-600 hidden">
+                        <i class="fa-solid font-bold fa-chevron-left text-sm"></i>
+                    </button>
+                    
+                    <div class="flex items-center space-x-2">
+                        <!-- Flag / Logo Icon -->
+                        <div class="w-7 h-7 rounded-full bg-orion-red flex items-center justify-center text-yellow-300 shadow-sm text-xs font-extrabold">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span id="header-region-title" class="font-bold text-gray-900 leading-none text-base">Chưa chọn khu vực</span>
+                            <span id="header-sub-step" class="text-xs text-gray-400 mt-0.5">Bước 1 · Chọn khu vực</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <button onclick="openHistoryModal()" class="text-xs font-semibold px-2.5 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition">
+                        <i class="fa-solid fa-list-check mr-1 text-orion-red"></i> Lịch sử
+                    </button>
+                </div>
+            </header>
+
+            <!-- Zalo / In-app Browser Warning Banner -->
+            <div id="zalo-banner" class="bg-amber-100/90 border-b border-amber-200 px-4 py-2.5 text-xs text-amber-900 flex items-center justify-between space-x-2 animate-fade-in">
+                <div class="flex items-center space-x-2">
+                    <span class="text-base">📷</span>
+                    <span><strong>Đang mở trong Zalo:</strong> bấm <i class="fa-solid fa-ellipsis"></i> góc trên &rarr; <strong>Mở bằng Safari / Chrome</strong> để chụp ảnh nhanh hơn</span>
+                </div>
+                <button onclick="dismissBanner()" class="text-amber-800 hover:text-amber-950 p-1 rounded-full">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN STEP CONTENT AREA -->
+        <main class="flex-1 p-5 md:p-8 flex flex-col justify-start">
+
+            <!-- STEP 1: REGION SELECTION -->
+            <section id="step-1" class="step-transition flex flex-col h-full">
+                <div class="text-center my-4">
+                    <h1 class="text-2xl font-bold text-gray-900">Khu vực làm việc</h1>
+                    <p class="text-sm text-gray-500 mt-1">Bước 1 · Chọn tỉnh/thành phố kiểm tra</p>
+                </div>
+
+                <div class="mt-6 space-y-3 flex-1">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Danh sách tỉnh thành</label>
+                    
+                    <div id="region-list" class="space-y-2.5">
+                        <button onclick="selectRegion('Đồng Nai')" class="region-btn w-full flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-orion-red hover:bg-red-50/50 transition text-left group">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-full bg-red-100 text-orion-red flex items-center justify-center font-bold text-sm group-hover:bg-orion-red group-hover:text-white transition">ĐN</span>
+                                <div>
+                                    <p class="font-semibold text-gray-800 group-hover:text-orion-red">Đồng Nai</p>
+                                    <p class="text-xs text-gray-400">Miền Nam</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-gray-300 group-hover:text-orion-red text-lg"></i>
+                        </button>
+
+                        <button onclick="selectRegion('Hồ Chí Minh')" class="region-btn w-full flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-orion-red hover:bg-red-50/50 transition text-left group">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-full bg-red-100 text-orion-red flex items-center justify-center font-bold text-sm group-hover:bg-orion-red group-hover:text-white transition">HC</span>
+                                <div>
+                                    <p class="font-semibold text-gray-800 group-hover:text-orion-red">TP. Hồ Chí Minh</p>
+                                    <p class="text-xs text-gray-400">Miền Nam</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-gray-300 group-hover:text-orion-red text-lg"></i>
+                        </button>
+
+                        <button onclick="selectRegion('Bình Dương')" class="region-btn w-full flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-orion-red hover:bg-red-50/50 transition text-left group">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-full bg-red-100 text-orion-red flex items-center justify-center font-bold text-sm group-hover:bg-orion-red group-hover:text-white transition">BD</span>
+                                <div>
+                                    <p class="font-semibold text-gray-800 group-hover:text-orion-red">Bình Dương</p>
+                                    <p class="text-xs text-gray-400">Miền Nam</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-gray-300 group-hover:text-orion-red text-lg"></i>
+                        </button>
+
+                        <button onclick="selectRegion('Hà Nội')" class="region-btn w-full flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-orion-red hover:bg-red-50/50 transition text-left group">
+                            <div class="flex items-center space-x-3">
+                                <span class="w-8 h-8 rounded-full bg-red-100 text-orion-red flex items-center justify-center font-bold text-sm group-hover:bg-orion-red group-hover:text-white transition">HN</span>
+                                <div>
+                                    <p class="font-semibold text-gray-800 group-hover:text-orion-red">Hà Nội</p>
+                                    <p class="text-xs text-gray-400">Miền Bắc</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-gray-300 group-hover:text-orion-red text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Custom Region Input -->
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5">Khu vực khác</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="custom-region-input" placeholder="Nhập tên tỉnh / thành..." class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-orion-red focus:border-transparent">
+                            <button onclick="selectCustomRegion()" class="px-4 py-2.5 bg-gray-800 text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 2: USER NAME ENTRY (Matching image layout) -->
+            <section id="step-2" class="step-transition hidden flex flex-col justify-center my-auto">
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Tên của anh/chị</h1>
+                    <p class="text-sm text-gray-500 mt-1">Bước 2 · dữ liệu sẽ ghi theo tên này</p>
+                </div>
+
+                <div class="w-full max-w-sm mx-auto space-y-4">
+                    <div class="relative">
+                        <input type="text" id="user-name-input" oninput="validateNameInput()" placeholder="Họ và Tên" 
+                            class="w-full px-5 py-4 rounded-2xl border-2 border-gray-800 text-gray-900 placeholder-gray-400 text-lg font-medium focus:outline-none focus:ring-4 focus:ring-red-100 focus:border-orion-red transition shadow-sm">
+                    </div>
+                    
+                    <p id="name-error-msg" class="text-xs text-red-500 hidden text-center font-medium">Vui lòng nhập họ và tên trước khi tiếp tục</p>
+                </div>
+
+                <div class="text-center mt-6">
+                    <span class="text-xs text-gray-400 font-normal">ORION · Product Age · không cần đăng nhập</span>
+                </div>
+            </section>
+
+            <!-- STEP 3: PRODUCT AGE & DATA CHECK FORM -->
+            <section id="step-3" class="step-transition hidden flex flex-col space-y-4">
+                <div class="text-center mb-2">
+                    <h1 class="text-xl font-bold text-gray-900">Thông tin sản phẩm</h1>
+                    <p class="text-xs text-gray-500">Bước 3 · Nhập chi tiết lô hàng & date</p>
+                </div>
+
+                <form id="product-form" onsubmit="event.preventDefault(); nextStep();" class="space-y-4 text-sm">
+                    <!-- Store/Retailer Name -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Tên Điểm Bán / Đại Lý <span class="text-red-500">*</span></label>
+                        <input type="text" id="store-name" required placeholder="VD: Bách Hóa Xanh - Đồng Nai 01" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-orion-red focus:outline-none">
+                    </div>
+
+                    <!-- Product Select -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Tên Sản Phẩm <span class="text-red-500">*</span></label>
+                        <select id="product-name" required class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-orion-red focus:outline-none bg-white">
+                            <option value="">-- Chọn sản phẩm Orion --</option>
+                            <option value="Chocopie Truyền Thống">ChocoPie Truyền Thống</option>
+                            <option value="Chocopie Dark">ChocoPie Dark</option>
+                            <option value="Custas Bánh Trứng">Custas Bánh Trứng</option>
+                            <option value="Bánh Tuyết Yukimochi">Yukimochi</option>
+                            <option value="O'Star Khoai Tây">O'Star Khoai Tây Vị Muối</option>
+                            <option value="To myam Snack">Toonies Snack</option>
+                            <option value="Cereal Bar Gum">Kẹo Sing-gum Xylitol</option>
+                            <option value="Khác">Sản phẩm khác</option>
+                        </select>
+                    </div>
+
+                    <!-- Batch Code & Manufacturing Date -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Ngày Sản Xuất (NSX)</label>
+                            <input type="date" id="mfg-date" required class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-orion-red focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Hạn Sử Dụng (HSD)</label>
+                            <input type="date" id="exp-date" required class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-orion-red focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Batch / Lot Code -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Mã Lô Hàng (Lot Code)</label>
+                        <input type="text" id="batch-code" placeholder="VD: L2309A4" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-orion-red focus:outline-none">
+                    </div>
+
+                    <!-- Packaging Status / Quality Rating -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-2">Tình Trạng Bao Bì</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="cursor-pointer border rounded-xl p-2.5 text-center text-xs font-medium hover:border-orion-red has-[:checked]:bg-red-50 has-[:checked]:border-orion-red has-[:checked]:text-orion-red">
+                                <input type="radio" name="packaging" value="Tốt" checked class="hidden">
+                                <i class="fa-solid fa-circle-check block text-sm mb-1"></i> Tốt / Nguyên vẹn
+                            </label>
+                            <label class="cursor-pointer border rounded-xl p-2.5 text-center text-xs font-medium hover:border-orion-red has-[:checked]:bg-red-50 has-[:checked]:border-orion-red has-[:checked]:text-orion-red">
+                                <input type="radio" name="packaging" value="Móp/Cũ" class="hidden">
+                                <i class="fa-solid fa-triangle-exclamation block text-sm mb-1"></i> Móp nhẹ / Cũ
+                            </label>
+                            <label class="cursor-pointer border rounded-xl p-2.5 text-center text-xs font-medium hover:border-orion-red has-[:checked]:bg-red-50 has-[:checked]:border-orion-red has-[:checked]:text-orion-red">
+                                <input type="radio" name="packaging" value="Lỗi/Hỏng" class="hidden">
+                                <i class="fa-solid fa-ban block text-sm mb-1"></i> Rách / Hỏng
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Photo Upload / Camera Mockup -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Chụp Ảnh Tem Date/Bao Bì</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition relative">
+                            <input type="file" id="photo-upload" accept="image/*" capture="environment" onchange="previewImage(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                            
+                            <div id="upload-placeholder" class="space-y-1">
+                                <i class="fa-solid fa-camera text-2xl text-gray-400"></i>
+                                <p class="text-xs font-medium text-gray-600">Nhấp để chụp hoặc tải ảnh lên</p>
+                                <p class="text-[10px] text-gray-400">Khuyến nghị chụp rõ mã HSD & NSX</p>
+                            </div>
+
+                            <div id="upload-preview-container" class="hidden relative inline-block">
+                                <img id="upload-preview" src="" alt="Preview" class="max-h-32 rounded-lg border shadow-sm mx-auto">
+                                <button type="button" onclick="removeImage(event)" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- STEP 4: SUMMARY & CONFIRMATION -->
+            <section id="step-4" class="step-transition hidden flex flex-col">
+                <div class="text-center mb-4">
+                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900">Xác Nhận Dữ Liệu</h1>
+                    <p class="text-xs text-gray-500">Bước 4 · Kiểm tra lại thông tin trước khi ghi nhận</p>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-3 text-sm flex-1">
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Khu vực & Người nhập</span>
+                        <button onclick="goToStep(1)" class="text-xs text-orion-red font-medium hover:underline">Sửa</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <p class="text-gray-400">Tỉnh / Thành:</p>
+                            <p id="summary-region" class="font-bold text-gray-800">--</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400">Người thực hiện:</p>
+                            <p id="summary-user" class="font-bold text-gray-800">--</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b pt-2 pb-2">
+                        <span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Chi tiết kiểm tra</span>
+                        <button onclick="goToStep(3)" class="text-xs text-orion-red font-medium hover:underline">Sửa</button>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div>
+                            <p class="text-gray-400">Điểm bán / Cửa hàng:</p>
+                            <p id="summary-store" class="font-semibold text-gray-800">--</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400">Sản phẩm:</p>
+                            <p id="summary-product" class="font-semibold text-gray-800">--</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <p class="text-gray-400">NSX:</p>
+                                <p id="summary-mfg" class="font-semibold text-gray-800">--</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">HSD:</p>
+                                <p id="summary-exp" class="font-semibold text-gray-800">--</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <p class="text-gray-400">Lô sản xuất:</p>
+                                <p id="summary-batch" class="font-semibold text-gray-800">--</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">Tình trạng bao bì:</p>
+                                <p id="summary-packaging" class="font-semibold text-gray-800">--</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Calculated Product Age -->
+                        <div class="bg-red-50 border border-red-100 rounded-xl p-3 mt-2">
+                            <p class="text-xs text-red-700 font-semibold">Ước tính tuổi sản phẩm (Product Age):</p>
+                            <p id="summary-age-calc" class="text-sm font-bold text-orion-red mt-0.5">-- ngày kể từ NSX</p>
+                        </div>
+
+                        <!-- Image Preview in Summary -->
+                        <div id="summary-photo-box" class="hidden mt-2">
+                            <p class="text-gray-400 mb-1">Ảnh đính kèm:</p>
+                            <img id="summary-photo-img" src="" class="h-20 rounded-lg border object-cover">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 5: SUCCESS STATE -->
+            <section id="step-5" class="step-transition hidden flex flex-col items-center justify-center text-center my-auto py-8">
+                <div class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl shadow-lg mb-4 animate-bounce">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">Ghi Nhận Thành Công!</h1>
+                <p class="text-sm text-gray-500 mt-2 max-w-xs">Dữ liệu kiểm tra tuổi sản phẩm Orion đã được lưu vào hệ thống.</p>
+
+                <div class="mt-8 space-y-3 w-full max-w-xs">
+                    <button onclick="resetFormForNewEntry()" class="w-full py-3.5 bg-orion-red text-white font-bold rounded-2xl shadow-md hover:bg-orion-darkRed transition">
+                        <i class="fa-solid fa-plus mr-1"></i> Nhập Lô Hàng Tiếp Theo
+                    </button>
+                    <button onclick="openHistoryModal()" class="w-full py-3 bg-gray-100 text-gray-700 font-semibold rounded-2xl hover:bg-gray-200 transition">
+                        Xem Danh Sách Đã Ghi Nhận
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BOTTOM ACTION BUTTON / FOOTER -->
+        <footer id="bottom-action-bar" class="p-4 border-t border-gray-100 bg-white sticky bottom-0 z-10">
+            <!-- Dynamic Main Action Button -->
+            <button id="btn-main-action" onclick="handleMainAction()" 
+                class="w-full py-4 rounded-2xl font-bold text-base transition-all duration-200 bg-gray-200 text-gray-400 cursor-not-allowed shadow-none">
+                Nhập tên để tiếp tục
+            </button>
+        </footer>
+
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div id="history-modal" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[80vh] flex flex-col overflow-hidden shadow-2xl animate-slide-up">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-database text-orion-red"></i> Lịch Sử Đã Ghi Nhận
+                </h3>
+                <button onclick="closeHistoryModal()" class="text-gray-400 hover:text-gray-600 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div id="history-list" class="p-4 flex-1 overflow-y-auto space-y-3 text-sm">
+                <!-- Data items populated dynamically -->
+                <p class="text-center text-gray-400 py-8">Chưa có dữ liệu nào được lưu.</p>
+            </div>
+
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex space-x-2">
+                <button onclick="exportCSV()" class="flex-1 py-2.5 bg-green-600 text-white font-semibold rounded-xl text-xs hover:bg-green-700 transition">
+                    <i class="fa-solid fa-file-excel mr-1"></i> Xuất CSV
+                </button>
+                <button onclick="clearHistory()" class="px-4 py-2.5 bg-red-100 text-red-600 font-semibold rounded-xl text-xs hover:bg-red-200 transition">
+                    Xóa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Application State
+        let currentState = {
+            step: 1,
+            region: '',
+            userName: '',
+            storeName: '',
+            productName: '',
+            mfgDate: '',
+            expDate: '',
+            batchCode: '',
+            packaging: 'Tốt',
+            photoDataUrl: '',
+            records: []
+        };
+
+        // DOM Element Refs
+        const steps = [
+            document.getElementById('step-1'),
+            document.getElementById('step-2'),
+            document.getElementById('step-3'),
+            document.getElementById('step-4'),
+            document.getElementById('step-5')
+        ];
+
+        const btnBack = document.getElementById('btn-back');
+        const btnMainAction = document.getElementById('btn-main-action');
+        const headerRegionTitle = document.getElementById('header-region-title');
+        const headerSubStep = document.getElementById('header-sub-step');
+        const userNameInput = document.getElementById('user-name-input');
+        const nameErrorMsg = document.getElementById('name-error-msg');
+        const bottomActionBar = document.getElementById('bottom-action-bar');
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadRecordsFromStorage();
+            updateStepView();
+        });
+
+        // Banner Handler
+        function dismissBanner() {
+            document.getElementById('zalo-banner').style.display = 'none';
+        }
+
+        // Region Selection (Step 1)
+        function selectRegion(regionName) {
+            currentState.region = regionName;
+            headerRegionTitle.innerText = regionName;
+            
+            // Highlight selected button UI
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                const text = btn.innerText;
+                if (text.includes(regionName)) {
+                    btn.classList.add('border-orion-red', 'bg-red-50/60');
+                } else {
+                    btn.classList.remove('border-orion-red', 'bg-red-50/60');
+                }
+            });
+
+            // Automatically move to Step 2
+            setTimeout(() => {
+                goToStep(2);
+            }, 200);
+        }
+
+        function selectCustomRegion() {
+            const val = document.getElementById('custom-region-input').value.trim();
+            if (val) {
+                selectRegion(val);
+            }
+        }
+
+        // Validate Step 2 Input Name
+        function validateNameInput() {
+            const val = userNameInput.value.trim();
+            currentState.userName = val;
+
+            if (val.length >= 2) {
+                nameErrorMsg.classList.add('hidden');
+                enableMainButton("Tiếp tục", true);
+            } else {
+                enableMainButton("Nhập tên để tiếp tục", false);
+            }
+        }
+
+        // Enable / Disable Main Action Button styling
+        function enableMainButton(text, active = true) {
+            btnMainAction.innerText = text;
+            if (active) {
+                btnMainAction.disabled = false;
+                btnMainAction.className = "w-full py-4 rounded-2xl font-bold text-base transition-all duration-200 bg-orion-red text-white shadow-lg hover:bg-orion-darkRed active:scale-[0.99] cursor-pointer";
+            } else {
+                btnMainAction.disabled = true;
+                btnMainAction.className = "w-full py-4 rounded-2xl font-bold text-base transition-all duration-200 bg-gray-200 text-gray-400 cursor-not-allowed shadow-none";
+            }
+        }
+
+        // Main Navigation Logic
+        function goToStep(targetStep) {
+            currentState.step = targetStep;
+            updateStepView();
+        }
+
+        function navigateStep(direction) {
+            const newStep = currentState.step + direction;
+            if (newStep >= 1 && newStep <= 5) {
+                goToStep(newStep);
+            }
+        }
+
+        function handleMainAction() {
+            if (currentState.step === 1) {
+                if (!currentState.region) {
+                    alert("Vui lòng chọn khu vực trước.");
+                    return;
+                }
+                goToStep(2);
+            } else if (currentState.step === 2) {
+                if (!currentState.userName || currentState.userName.trim().length < 2) {
+                    nameErrorMsg.classList.remove('hidden');
+                    return;
+                }
+                goToStep(3);
+            } else if (currentState.step === 3) {
+                // Read & Validate Step 3 Form
+                const store = document.getElementById('store-name').value.trim();
+                const product = document.getElementById('product-name').value;
+                const mfg = document.getElementById('mfg-date').value;
+                const exp = document.getElementById('exp-date').value;
+
+                if (!store || !product || !mfg || !exp) {
+                    alert("Vui lòng điền đầy đủ các thông tin bắt buộc (*)");
+                    return;
+                }
+
+                currentState.storeName = store;
+                currentState.productName = product;
+                currentState.mfgDate = mfg;
+                currentState.expDate = exp;
+                currentState.batchCode = document.getElementById('batch-code').value.trim() || 'K/N';
+                currentState.packaging = document.querySelector('input[name="packaging"]:checked').value;
+
+                populateSummary();
+                goToStep(4);
+            } else if (currentState.step === 4) {
+                // Submit Data
+                saveCurrentRecord();
+                goToStep(5);
+            }
+        }
+
+        function updateStepView() {
+            // Hide all steps
+            steps.forEach(s => s.classList.add('hidden'));
+
+            // Show active step
+            steps[currentState.step - 1].classList.remove('hidden');
+
+            // Header Back Button Control
+            if (currentState.step > 1 && currentState.step < 5) {
+                btnBack.classList.remove('hidden');
+            } else {
+                btnBack.classList.add('hidden');
+            }
+
+            // Footer Button Visibility
+            if (currentState.step === 5) {
+                bottomActionBar.classList.add('hidden');
+            } else {
+                bottomActionBar.classList.remove('hidden');
+            }
+
+            // Step dynamic subheader and footer text
+            switch(currentState.step) {
+                case 1:
+                    headerSubStep.innerText = "Bước 1 · Chọn khu vực";
+                    enableMainButton("Vui lòng chọn khu vực", !!currentState.region);
+                    break;
+                case 2:
+                    headerSubStep.innerText = "Bước 2 · Nhập họ tên";
+                    validateNameInput();
+                    break;
+                case 3:
+                    headerSubStep.innerText = "Bước 3 · Chi tiết sản phẩm";
+                    enableMainButton("Xem Lại Dữ Liệu", true);
+                    break;
+                case 4:
+                    headerSubStep.innerText = "Bước 4 · Xác nhận";
+                    enableMainButton("Gửi & Ghi Nhận Dữ Liệu", true);
+                    break;
+            }
+        }
+
+        // Step 3 Image Upload Handling
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentState.photoDataUrl = e.target.result;
+                    document.getElementById('upload-preview').src = e.target.result;
+                    document.getElementById('upload-placeholder').classList.add('hidden');
+                    document.getElementById('upload-preview-container').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage(e) {
+            e.stopPropagation();
+            currentState.photoDataUrl = '';
+            document.getElementById('photo-upload').value = '';
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('upload-preview-container').classList.add('hidden');
+        }
+
+        // Step 4 Summary Calculator
+        function populateSummary() {
+            document.getElementById('summary-region').innerText = currentState.region || '--';
+            document.getElementById('summary-user').innerText = currentState.userName || '--';
+            document.getElementById('summary-store').innerText = currentState.storeName || '--';
+            document.getElementById('summary-product').innerText = currentState.productName || '--';
+            document.getElementById('summary-mfg').innerText = formatDate(currentState.mfgDate);
+            document.getElementById('summary-exp').innerText = formatDate(currentState.expDate);
+            document.getElementById('summary-batch').innerText = currentState.batchCode;
+            document.getElementById('summary-packaging').innerText = currentState.packaging;
+
+            // Calculate product age (days from manufacturing date)
+            if (currentState.mfgDate) {
+                const mfg = new Date(currentState.mfgDate);
+                const today = new Date();
+                const diffTime = Math.abs(today - mfg);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById('summary-age-calc').innerText = `${diffDays} ngày kể từ NSX`;
+            }
+
+            // Image Preview in Summary
+            const imgBox = document.getElementById('summary-photo-box');
+            const imgTag = document.getElementById('summary-photo-img');
+            if (currentState.photoDataUrl) {
+                imgTag.src = currentState.photoDataUrl;
+                imgBox.classList.remove('hidden');
+            } else {
+                imgBox.classList.add('hidden');
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '--';
+            const parts = dateStr.split('-');
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return dateStr;
+        }
+
+        // Data Storage & History
+        function saveCurrentRecord() {
+            const record = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString('vi-VN'),
+                region: currentState.region,
+                userName: currentState.userName,
+                storeName: currentState.storeName,
+                productName: currentState.productName,
+                mfgDate: currentState.mfgDate,
+                expDate: currentState.expDate,
+                batchCode: currentState.batchCode,
+                packaging: currentState.packaging
+            };
+
+            currentState.records.unshift(record);
+            localStorage.setItem('orion_product_age_records', JSON.stringify(currentState.records));
+            renderHistory();
+        }
+
+        function loadRecordsFromStorage() {
+            const saved = localStorage.getItem('orion_product_age_records');
+            if (saved) {
+                try {
+                    currentState.records = JSON.parse(saved);
+                    renderHistory();
+                } catch(e) {
+                    currentState.records = [];
+                }
+            }
+        }
+
+        function renderHistory() {
+            const listEl = document.getElementById('history-list');
+            if (currentState.records.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-gray-400 py-8">Chưa có dữ liệu nào được lưu.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = currentState.records.map(rec => `
+                <div class="p-3 bg-gray-50 border rounded-xl space-y-1">
+                    <div class="flex justify-between font-bold text-gray-800">
+                        <span>${rec.productName}</span>
+                        <span class="text-orion-red text-xs">${rec.region}</span>
+                    </div>
+                    <div class="text-xs text-gray-500 flex justify-between">
+                        <span>Đại lý: ${rec.storeName}</span>
+                        <span>Người kiểm: ${rec.userName}</span>
+                    </div>
+                    <div class="text-[11px] text-gray-400 flex justify-between pt-1 border-t border-gray-200">
+                        <span>NSX: ${formatDate(rec.mfgDate)} | HSD: ${formatDate(rec.expDate)}</span>
+                        <span>${rec.timestamp}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openHistoryModal() {
+            renderHistory();
+            document.getElementById('history-modal').classList.remove('hidden');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('history-modal').classList.add('hidden');
+        }
+
+        function clearHistory() {
+            if (confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử ghi nhận?")) {
+                currentState.records = [];
+                localStorage.removeItem('orion_product_age_records');
+                renderHistory();
+            }
+        }
+
+        function exportCSV() {
+            if (currentState.records.length === 0) {
+                alert("Chưa có dữ liệu để xuất CSV.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "ID,Thời Gian,Khu Vực,Nguồi Kiểm,Điểm Bán,Sản Phẩm,NSX,HSD,Mã Lô,Bao Bì\n";
+
+            currentState.records.forEach(r => {
+                csvContent += `"${r.id}","${r.timestamp}","${r.region}","${r.userName}","${r.storeName}","${r.productName}","${r.mfgDate}","${r.expDate}","${r.batchCode}","${r.packaging}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Orion_ProductAge_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetFormForNewEntry() {
+            // Keep user name and region, reset product specific details
+            document.getElementById('store-name').value = '';
+            document.getElementById('product-name').value = '';
+            document.getElementById('mfg-date').value = '';
+            document.getElementById('exp-date').value = '';
+            document.getElementById('batch-code').value = '';
+            removeImage(new Event('click'));
+            
+            goToStep(3);
+        }
+    </script>
+</body>
+</html>
